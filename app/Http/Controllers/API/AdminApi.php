@@ -11,7 +11,7 @@ use App\Services\ResponseFormat;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-// use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AdminApi extends Controller
 {
@@ -28,30 +28,89 @@ class AdminApi extends Controller
                 'email' => ['required', 'email'],
                 'password' => ['required'],
             ]);
-
             if (Auth::guard('admin')->attempt([
                 'email' => $credentials['email'],
                 'password' => $credentials['password'],
             ])) {
-                $request->session()->regenerate();
+                // $request->session()->regenerate();
                 return ResponseFormat::returnSuccess();
-            } else {
-                return ResponseFormat::returnFailed();
             }
+        } catch (Exception $e) {
+            Log::error($e);
+            return ResponseFormat::returnFailed();
+        }
+        return ResponseFormat::returnFailed();
+    }
+
+
+    //check if admin is authenticated
+    public function checkAuth()
+    {
+        try {
+            if (Auth::guard('admin')->check()) {
+                return ResponseFormat::returnSuccess();
+            }
+        } catch (Exception $e) {
+            Log::error($e);
+            return ResponseFormat::returnFailed();
+        }
+        return ResponseFormat::returnFailed();
+    }
+
+
+
+    /**
+     * **used to get all admin users**
+     * @param Request $request containing user credentials
+     * @return mixed 
+     */
+    public function all()
+    {
+        try {
+            $admins = Admin::all();
+            return ResponseFormat::returnSuccess($admins);
         } catch (Exception $e) {
             Log::error($e);
             return ResponseFormat::returnFailed();
         }
     }
 
-    //create admin account
-    public function create()
+
+    public function get($id)
     {
         try {
+            $admin = Admin::find($id);
+            if ($admin) {
+                return ResponseFormat::returnSuccess($admin);
+            }
+        } catch (Exception $e) {
+            Log::error($e);
+            return ResponseFormat::returnFailed();
+        }
+        return ResponseFormat::returnNotFound();
+    }
+
+
+    //create admin account
+    public function store(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => ['required', 'string'],
+                'email' => ['required', 'email', 'unique:admin'],
+                'password' => ['required'],
+            ]);
+
+            if ($validator->fails()) {
+                return ResponseFormat::returnFailed($validator->errors());
+            }
+
+            $credentials = $validator->validated();
+
             $admin = Admin::create([
-                'name' => 'Morpheus',
-                'email' => 'kennyozordi@betathing.com',
-                'password' => Hash::make('Password54321#'),
+                'name' => $credentials['name'],
+                'email' => $credentials['email'],
+                'password' => Hash::make($credentials['password']),
             ]);
 
             return ResponseFormat::returnSuccess($admin);
@@ -60,6 +119,22 @@ class AdminApi extends Controller
             return ResponseFormat::returnFailed();
         }
     }
+
+
+    public function delete($id)
+    {
+        try {
+            $admin = Admin::find($id);
+            if ($admin) {
+                Admin::destroy($id);
+                return ResponseFormat::returnSuccess();
+            }
+        } catch (Exception $e) {
+            return ResponseFormat::returnFailed($admin);
+        }
+        return ResponseFormat::returnNotFound();
+    }
+
 
     public function logout()
     {

@@ -15,10 +15,10 @@ class CreateCartitemsTable extends Migration
     {
         Schema::create('cartitems', function (Blueprint $table) {
             $table->integer('id', true);
-            $table->integer('game')->nullable();
+            $table->integer('game_id')->nullable();
             $table->dateTime('bookingstarttime')->nullable();
             $table->dateTime('bookingendtime')->nullable();
-            $table->integer('order')->nullable();
+            $table->integer('order_id')->nullable();
             $table->decimal('price', 13)->nullable();
         });
     }

@@ -42,6 +42,9 @@ return [
 		],
 		'pagelevel' => [
 			'css' => [
+				'games' => [
+					'vendor/datatables/css/jquery.dataTables.min.css',
+				],
 				'dashboard_1' => [
 					'vendor/jqvmap/css/jqvmap.min.css',
 					'vendor/chartist/css/chartist.min.css',
@@ -215,6 +218,14 @@ return [
 				],
 			],
 			'js' => [
+				'games' => [
+					'vendor/chart.js/Chart.bundle.min.js',
+					'vendor/apexchart/apexchart.js',
+					'vendor/datatables/js/jquery.dataTables.min.js',
+					'js/plugins-init/datatables.init.js',
+					'js/custom.min.js',
+					'js/deznav-init.js',
+				],
 				'dashboard_1' => [
 					'vendor/apexchart/apexchart.js',
 					'js/dashboard/dashboard-1.js',
@@ -400,6 +411,12 @@ return [
 					'js/deznav-init.js',
 				],
 				'form_element' => [
+					'vendor/chart.js/Chart.bundle.min.js',
+					'vendor/apexchart/apexchart.js',
+					'js/custom.min.js',
+					'js/deznav-init.js',
+				],
+				'create' => [
 					'vendor/chart.js/Chart.bundle.min.js',
 					'vendor/apexchart/apexchart.js',
 					'js/custom.min.js',

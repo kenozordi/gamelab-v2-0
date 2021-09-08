@@ -6,11 +6,8 @@
 {{-- Content --}}
 @section('content')
 <div class="col-md-6">
-    @if (session('alert'))
-    <div class="alert alert-danger">
-        <strong>{{ session('alert') }}</strong>
-    </div>
-    @endif
+
+    <!-- error message for validation error -->
     @if ($errors->any())
     <div class="alert alert-danger">
         <ul>
@@ -20,6 +17,8 @@
         </ul>
     </div>
     @endif
+
+
     <div class="authincation-content">
         <div class="row no-gutters">
             <div class="col-xl-12">

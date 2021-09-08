@@ -15,7 +15,7 @@ class CreateEventsTable extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->integer('id', true);
-            $table->integer('game')->nullable();
+            $table->integer('game_id')->nullable();
             $table->dateTime('eventdate')->nullable();
             $table->integer('status')->nullable();
         });

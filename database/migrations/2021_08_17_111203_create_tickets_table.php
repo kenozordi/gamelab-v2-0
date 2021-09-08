@@ -15,15 +15,13 @@ class CreateTicketsTable extends Migration
     {
         Schema::create('tickets', function (Blueprint $table) {
             $table->char('guid', 36)->primary();
-            $table->dateTime('timestampcreate');
-            $table->dateTime('timestampdelete');
-            $table->integer('minutes')->default(0);
-            $table->integer('tickettypeid')->nullable()->index('FK_vrtickets_vrtickettypes_0');
-            $table->integer('bookingid')->nullable()->index('FK_trickets_booking');
-            $table->integer('clientid')->nullable()->index('FK_vrtickets_vrclients_1');
-            $table->dateTime('starttime')->nullable();
-            $table->dateTime('endtime')->nullable();
-            $table->boolean('isdeleted');
+            $table->boolean('status')->nullable()->default(1);
+            $table->integer('tickettype_id')->index('FK_vrtickets_vrtickettypes_0');
+            $table->integer('booking_id')->index('FK_trickets_booking');
+            $table->integer('client_id')->index('FK_vrtickets_vrclients_1');
+            $table->integer('order_id');
+            $table->boolean('game_pass_issued')->nullable()->default(0);
+            $table->timestamps();
         });
     }
 

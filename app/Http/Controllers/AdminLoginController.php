@@ -18,8 +18,7 @@ class AdminLoginController extends Controller
     }
     public function index()
     {
-
-        if (Auth::guard('admin')->check()) {
+        if ($this->adminApi->checkAuth()->getData()->status) {
             return redirect()->route('admin.dashboard');
         }
 
@@ -36,7 +35,7 @@ class AdminLoginController extends Controller
         if ($authenticated->status) {
             return redirect()->intended('admin/dashboard');
         } else {
-            return back()->with('alert', 'Oops! You have entered invalid credentials');
+            return back()->withErrors('Oops! You have entered invalid credentials');
         }
     }
 

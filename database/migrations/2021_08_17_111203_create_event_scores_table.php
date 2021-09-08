@@ -16,7 +16,7 @@ class CreateEventScoresTable extends Migration
         Schema::create('event_scores', function (Blueprint $table) {
             $table->integer('id', true);
             $table->integer('event')->nullable();
-            $table->string('gamer', 45)->nullable();
+            $table->string('gamer_id', 45)->nullable();
             $table->string('avatar', 45)->nullable();
             $table->integer('score')->nullable();
         });

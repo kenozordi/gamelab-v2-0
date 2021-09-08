@@ -20,7 +20,7 @@ class CreateNewsTable extends Migration
             $table->text('content')->nullable();
             $table->dateTime('news_date')->nullable();
             $table->tinyInteger('status')->nullable()->default(1);
-            $table->integer('category')->nullable();
+            $table->integer('category_id')->nullable();
         });
     }
 

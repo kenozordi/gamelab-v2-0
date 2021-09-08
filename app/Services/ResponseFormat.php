@@ -27,9 +27,9 @@ trait ResponseFormat
      * @param Optional_String $message	The custom message to be sent with the response
      * To return default text, call the method without the message parameter
      */
-    public static function returnFailed($message = null)
+    public static function returnFailed($data = null, $message = null)
     {
-        return response()->json(ResponseFormat::formatResponse(false, null, $message == null ? 'Failed' : $message), 200);
+        return response()->json(ResponseFormat::formatResponse(false, $data, $message == null ? 'Failed' : $message), 200);
     }
 
 

@@ -16,7 +16,7 @@ class GameApi extends Controller
     public function all()
     {
         try {
-            $game = Game::all();
+            $game = Game::with('genre')->with('game_mode')->with('player_perspective')->get();
             return ResponseFormat::returnSuccess($game);
         } catch (Exception $e) {
             Log::error($e);
@@ -27,7 +27,7 @@ class GameApi extends Controller
     public function get($id)
     {
         try {
-            $game = Game::find($id);
+            $game = Game::find($id)->with('genre')->first();
             if ($game) {
                 return ResponseFormat::returnSuccess($game);
             }
@@ -57,15 +57,7 @@ class GameApi extends Controller
             }
             $game = $validator->validated();
 
-            $game = new Game([
-                'title'                 => $game['title'],
-                'description'           => $game['description'],
-                'genre_id'              => $game['genre_id'],
-                'game_mode_id'          => $game['game_mode_id'],
-                'player_perspective_id' => $game['player_perspective_id'],
-                'rating'                => $game['rating'],
-                'status'                => $game['status'],
-            ]);
+            $game = new Game($game);
             $game->save();
 
             return ResponseFormat::returnSuccess();

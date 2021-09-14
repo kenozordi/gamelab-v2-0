@@ -22,10 +22,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::group(['prefix' => 'admin'], function () {
     Route::post('/login', 'AdminApi@authenticate')->name('admin.login');
     Route::get('/admins', 'AdminApi@all');
+    Route::get('/test', 'AdminApi@test');
     Route::get('/{id}', 'AdminApi@get');
     Route::post('/store', 'AdminApi@store');
     Route::delete('/{id}', 'AdminApi@delete');
-    Route::get('/test', 'AdminApi@test');
 });
 
 // Route::group(['prefix' => 'admin', 'middleware' => 'auth:admin'], function () {

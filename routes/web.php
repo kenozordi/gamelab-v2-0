@@ -100,18 +100,24 @@ Route::group(['prefix' => 'admin'], function () {
 });
 
 //admin routes
-Route::group(['prefix' => 'admin', 'middleware' => 'auth:admin'], function () {
+// Route::group(['prefix' => 'admin', 'middleware' => 'auth:admin'], function () {
+Route::group(['prefix' => 'admin'], function () {
     Route::get('/dashboard', 'AdminController@dashboard')->name('admin.dashboard');
 
     //games routes
     Route::get('/games', 'GameController@games')->name('admin.games');
     Route::get('/games/create', 'GameController@create')->name('admin.games.create');
     Route::post('/games/store', 'GameController@store')->name('admin.games.store');
+    Route::get('/games/settings', 'GameController@settings')->name('admin.games.settings');
     Route::get('/games/{id}', 'GameController@get')->name('admin.games.get');
 
     //genre routes
     Route::post('/genre/store', 'GameController@storeGenre')->name('admin.genre.store');
     Route::post('/genre/delete/{id}', 'GameController@deleteGenre')->name('admin.genre.delete');
+
+    //gameMode routes
+    Route::post('/gameMode/store', 'GameController@storeGameMode')->name('admin.gameMode.store');
+    Route::post('/gameMode/delete/{id}', 'GameController@deleteGameMode')->name('admin.gameMode.delete');
 
     Route::get('/logout', 'AdminLoginController@logout')->name('admin.logout');
 });

@@ -14,6 +14,16 @@ class Game extends Model
 
     public function genre()
     {
-        return $this->hasOne(Genre::class, 'genre_id', 'id');
+        return $this->belongsTo(Genre::class);
+    }
+
+    public function game_mode()
+    {
+        return $this->belongsTo(GameMode::class);
+    }
+
+    public function player_perspective()
+    {
+        return $this->belongsTo(PlayerPerspective::class);
     }
 }

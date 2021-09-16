@@ -11,4 +11,14 @@ class Booking extends Model
 
     protected $table = "bookingreferences";
     protected $guarded = [];
+
+    public function game()
+    {
+        return $this->belongsTo(Game::class);
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
 }

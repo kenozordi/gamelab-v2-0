@@ -16,7 +16,7 @@ class GameApi extends Controller
     public function all()
     {
         try {
-            $game = Game::with('genre')->with('game_mode')->with('player_perspective')->get();
+            $game = Game::with('genre')->with('game_mode')->with('player_perspective')->orderBy('created_at', 'DESC')->get();
             return ResponseFormat::returnSuccess($game);
         } catch (Exception $e) {
             Log::error($e);
@@ -67,12 +67,13 @@ class GameApi extends Controller
         }
     }
 
-    public function delete($id)
+    public function toggle($id)
     {
         try {
             $game = Game::find($id);
             if ($game) {
-                Game::destroy($id);
+                $game->status = $game->status == 1 ? 0 : 1;
+                $game->save();
                 return ResponseFormat::returnSuccess();
             }
         } catch (Exception $e) {

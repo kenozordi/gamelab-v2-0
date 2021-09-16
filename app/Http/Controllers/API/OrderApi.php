@@ -17,7 +17,7 @@ class OrderApi extends Controller
     public function all()
     {
         try {
-            $orders = Order::all();
+            $orders = Order::orderBy('created_at', 'DESC')->get();
             return ResponseFormat::returnSuccess($orders);
         } catch (Exception $e) {
             Log::error($e);
@@ -61,24 +61,24 @@ class OrderApi extends Controller
                 $booking = Booking::find($booking_id);
 
                 //check if booking exists and is active
-                if (!$booking || $booking->status == 0) return ResponseFormat::returnFailed(null, 'Booking ' . $booking_id . ' does not exist');
+                if (!$booking || $booking->status == 0) return ResponseFormat::returnFailed('Booking ' . $booking_id . ' does not exist');
 
                 //check if booking has been paid for
                 if ($booking->order_no) {
                     $order = Order::where('order_no', $booking->order_no)->first();
                     if ($order && $order->status == 2) {
-                        return ResponseFormat::returnFailed(null, 'Booking ' . $booking_id . ' has been paid for already');
+                        return ResponseFormat::returnFailed('Booking ' . $booking_id . ' has been paid for already');
                     }
                 }
 
                 //check if booking has expired
-                if (strtotime($booking->expires_at) <= strtotime('now')) return ResponseFormat::returnFailed(null, 'Booking ' . $booking_id . ' has expired');
+                if (strtotime($booking->expires_at) <= strtotime('now')) return ResponseFormat::returnFailed('Booking ' . $booking_id . ' has expired');
 
                 //check if booking game and client exist.
                 $gameClient = GameClient::where('game_id', $booking->game_id)
                     ->where('client_id', $booking->client_id)
                     ->first();
-                if (!$gameClient) return ResponseFormat::returnFailed(null, 'Invalid game or client selected for booking ' . $booking_id);
+                if (!$gameClient) return ResponseFormat::returnFailed('Invalid game or client selected for booking ' . $booking_id);
 
                 //update booking with order_id
                 $booking->order_no = $order_no;
@@ -107,7 +107,9 @@ class OrderApi extends Controller
         try {
             $order = Order::find($id);
             if ($order) {
-                Order::destroy($id);
+                // an order shouldn't be deleted??
+                // $order->status = 0;
+                // $order->save();
                 return ResponseFormat::returnSuccess();
             }
         } catch (Exception $e) {

@@ -119,5 +119,37 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('/gameMode/store', 'GameController@storeGameMode')->name('admin.gameMode.store');
     Route::post('/gameMode/delete/{id}', 'GameController@deleteGameMode')->name('admin.gameMode.delete');
 
+    //playerPerspective routes
+    Route::post('/playerPerspective/store', 'GameController@storePlayerPerspective')->name('admin.playerPerspective.store');
+    Route::post('/playerPerspective/delete/{id}', 'GameController@deletePlayerPerspective')->name('admin.playerPerspective.delete');
+
+    //client routes
+    Route::get('/clients', 'ClientController@clients')->name('admin.clients');
+    Route::get('/client/create', 'ClientController@create')->name('admin.client.create');
+    Route::post('/client/store', 'ClientController@store')->name('admin.client.store');
+    Route::get('/client/settings', 'ClientController@settings')->name('admin.client.settings');
+    Route::get('/client/{id}', 'ClientController@get')->name('admin.client.get');
+
+    //booking routes
+    Route::get('/bookings', 'BookingController@bookings')->name('admin.bookings');
+    Route::get('/booking/create', 'BookingController@create')->name('admin.booking.create');
+    Route::post('/booking/store', 'BookingController@store')->name('admin.booking.store');
+    Route::get('/booking/settings', 'BookingController@settings')->name('admin.booking.settings');
+    Route::get('/booking/{id}', 'BookingController@get')->name('admin.booking.get');
+
+    //order routes
+    Route::get('/orders', 'OrderController@orders')->name('admin.orders');
+    Route::get('/order/create', 'OrderController@create')->name('admin.order.create');
+    Route::post('/order/store', 'OrderController@store')->name('admin.order.store');
+    Route::get('/order/settings', 'OrderController@settings')->name('admin.order.settings');
+    Route::get('/order/{id}', 'OrderController@get')->name('admin.order.get');
+
+    //ticket routes
+    Route::get('/tickets', 'TicketController@tickets')->name('admin.tickets');
+    Route::get('/ticket/create', 'TicketController@create')->name('admin.ticket.create');
+    Route::post('/ticket/store', 'TicketController@store')->name('admin.ticket.store');
+    Route::get('/ticket/settings', 'TicketController@settings')->name('admin.ticket.settings');
+    Route::get('/ticket/{id}', 'TicketController@get')->name('admin.ticket.get');
+
     Route::get('/logout', 'AdminLoginController@logout')->name('admin.logout');
 });

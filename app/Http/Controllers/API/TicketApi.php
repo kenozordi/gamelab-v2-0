@@ -19,7 +19,7 @@ class TicketApi extends Controller
     public function all()
     {
         try {
-            $tickets = Ticket::all();
+            $tickets = Ticket::with('ticket_type')->with('booking')->with('order')->orderBy('created_at', 'DESC')->get();
             return ResponseFormat::returnSuccess($tickets);
         } catch (Exception $e) {
             Log::error($e);
@@ -30,7 +30,6 @@ class TicketApi extends Controller
     public function get($id)
     {
         try {
-            // $ticket = Ticket::find($id);
             $ticket = Ticket::where('guid', $id)->first();
             if ($ticket) {
                 return ResponseFormat::returnSuccess($ticket);
@@ -85,12 +84,13 @@ class TicketApi extends Controller
         }
     }
 
-    public function delete($id)
+    public function toggle($id)
     {
         try {
             $ticket = Ticket::find($id);
             if ($ticket) {
-                Ticket::destroy($id);
+                $ticket->status = $ticket->status == 1 ? 0 : 1;
+                $ticket->save();
                 return ResponseFormat::returnSuccess();
             }
             return ResponseFormat::returnNotFound();

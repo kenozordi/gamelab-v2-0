@@ -58,12 +58,13 @@ class PlayerPerspectiveApi extends Controller
         }
     }
 
-    public function delete($id)
+    public function toggle($id)
     {
         try {
             $player_perspective = PlayerPerspective::find($id);
             if ($player_perspective) {
-                PlayerPerspective::destroy($id);
+                $player_perspective->status = $player_perspective->status == 1 ? 0 : 1;
+                $player_perspective->save();
                 return ResponseFormat::returnSuccess();
             }
             return ResponseFormat::returnNotFound();

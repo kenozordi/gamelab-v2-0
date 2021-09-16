@@ -15,8 +15,8 @@ class ClientApi extends Controller
     public function all()
     {
         try {
-            $client = Client::all();
-            return ResponseFormat::returnSuccess($client);
+            $clients = Client::orderBy('created_at', 'DESC')->get();
+            return ResponseFormat::returnSuccess($clients);
         } catch (Exception $e) {
             Log::error($e);
             return ResponseFormat::returnFailed();
@@ -42,8 +42,8 @@ class ClientApi extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'machinename' => ['required', 'string'],
-                'ipaddress' => ['required', 'string'],
-                'dashboardmoduleip' => ['string'],
+                'ipaddress' => ['required', 'string', 'unique:clients,ipaddress'],
+                'dashboardmoduleip' => ['string', 'unique:clients,ipaddress'],
                 'tileconfigsetid' => ['integer'],
                 'isdeleted' => ['boolean'],
                 'status' => ['boolean'],
@@ -62,12 +62,13 @@ class ClientApi extends Controller
         }
     }
 
-    public function delete($id)
+    public function toggle($id)
     {
         try {
             $client = Client::find($id);
             if ($client) {
-                Client::destroy($id);
+                $client->status = $client->status == 1 ? 0 : 1;
+                $client->save();
                 return ResponseFormat::returnSuccess();
             }
             return ResponseFormat::returnNotFound();

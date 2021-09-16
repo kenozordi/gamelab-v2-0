@@ -29,6 +29,7 @@ trait ResponseFormat
      */
     public static function returnFailed($data = null, $message = null)
     {
+        $data = $data == null ? 'Failed' : $data;
         return response()->json(ResponseFormat::formatResponse(false, $data, $message == null ? 'Failed' : $message), 200);
     }
 

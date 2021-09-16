@@ -33,7 +33,7 @@
           <div class="dropdown-menu arrow">
             <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#addGenre"><i class="fa fa-plus mr-1"></i> Genre</a>
             <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#addGameMode"><i class="fa fa-cart-plus mr-1"></i> Mode</a>
-            <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#addPerspective"><i class="fa fa-life-ring mr-1"></i> Perspective</a>
+            <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#addPlayerPerspective"><i class="fa fa-life-ring mr-1"></i> Perspective</a>
           </div>
         </div>
       </div>
@@ -84,6 +84,7 @@
                       <th>Name</th>
                       <th>Status</th>
                       <th>Created At</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -98,6 +99,14 @@
                         @endif
                       </td>
                       <td>{{$genre->created_at}}</td>
+                      <td>
+                        <form action="{{url('/')}}/admin/genre/delete/{{$genre->id}}" method="post">
+                          @csrf
+                          <a href="javascript:void(0)" onclick="$(this).closest('form').submit(); return false;" class="btn btn-sm btn-icon btn-danger mr-1" data-action="reload">
+                            <i class="fa fa-trash"></i>
+                          </a>
+                        </form>
+                      </td>
                     </tr>
                     @endforeach
                   </tbody>
@@ -189,6 +198,7 @@
                       <th>Perspective</th>
                       <th>Status</th>
                       <th>Created At</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -203,6 +213,14 @@
                         @endif
                       </td>
                       <td>{{$perspective->created_at}}</td>
+                      <td>
+                        <form action="{{url('/')}}/admin/playerPerspective/delete/{{$perspective->id}}" method="post">
+                          @csrf
+                          <a href="javascript:void(0)" onclick="$(this).closest('form').submit(); return false;" class="btn btn-sm btn-icon btn-danger mr-1" data-action="reload">
+                            <i class="fa fa-trash"></i>
+                          </a>
+                        </form>
+                      </td>
                     </tr>
                     @endforeach
                   </tbody>
@@ -273,6 +291,34 @@
       </div>
     </div>
     <!--End Game Mode modal-->
+
+    <!-- Player Perspective Modal -->
+    <div class="modal fade text-left" id="addPlayerPerspective" tabindex="-1" role="dialog" aria-labelledby="addPlayerPerspectiveModal" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header bg-success white">
+            <label class="modal-title text-text-bold-600" id="addPlayerPerspectiveModal">Add new Player Perspective</label>
+            <button type="button" class="close white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <form action="{{url('/')}}/admin/playerPerspective/store" method="post">
+            @csrf
+            <div class="modal-body">
+              <label>Player Perspective: </label>
+              <div class="form-group">
+                <input name="perspective" type="text" placeholder="First Person" class="form-control">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <input type="reset" class="btn btn-secondary btn-lg" data-dismiss="modal" value="close">
+              <input type="submit" class="btn btn-success btn-lg" value="Submit">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!--End Player Perspective modal-->
 
     <!--End modals-->
 

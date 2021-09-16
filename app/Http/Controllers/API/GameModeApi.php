@@ -58,12 +58,13 @@ class GameModeApi extends Controller
         }
     }
 
-    public function delete($id)
+    public function toggle($id)
     {
         try {
             $game_mode = GameMode::find($id);
             if ($game_mode) {
-                GameMode::destroy($id);
+                $game_mode->status = $game_mode->status == 1 ? 0 : 1;
+                $game_mode->save();
                 return ResponseFormat::returnSuccess();
             }
             return ResponseFormat::returnNotFound();

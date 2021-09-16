@@ -3,9 +3,6 @@
 
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/forms/selects/select2.min.css">
-<link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/forms/toggle/bootstrap-switch.min.css">
-<link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/forms/toggle/switchery.min.css">
-<link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/css/plugins/forms/switch.css">
 @endsection
 
 @section('content')
@@ -14,13 +11,13 @@
   <div class="content-wrapper">
     <div class="content-header row">
       <div class="content-header-left col-md-8 col-12 mb-2 breadcrumb-new">
-        <h3 class="content-header-title mb-0 d-inline-block">Clients</h3>
+        <h3 class="content-header-title mb-0 d-inline-block">Tickets</h3>
         <div class="row breadcrumbs-top d-inline-block">
           <div class="breadcrumb-wrapper col-12">
             <ol class="breadcrumb">
               <li class="breadcrumb-item"><a href="/admin">Admin</a>
               </li>
-              <li class="breadcrumb-item"><a href="#">Clients</a>
+              <li class="breadcrumb-item"><a href="#">Tickets</a>
               </li>
               <li class="breadcrumb-item active">All
               </li>
@@ -34,7 +31,7 @@
             <i class="icon-settings"></i>
           </button>
           <div class="dropdown-menu arrow">
-            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#addClient"><i class="fa fa-plus mr-1"></i> Add</a>
+            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#addTicket"><i class="fa fa-plus mr-1"></i> Add</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="/admin/games/settings"><i class="fa fa-cog mr-1"></i> Settings</a>
           </div>
@@ -63,17 +60,16 @@
         @endif
         <!-- End Errors -->
 
-        <!-- List of clients -->
+        <!-- List of tickets -->
         <div class="col-xl-12 col-lg-12">
           <div class="card">
             <div class="card-header">
-              <h4 class="card-title">Clients</h4>
+              <h4 class="card-title">Tickets</h4>
               <a class="heading-elements-toggle"><i class="fa fa-ellipsis-v font-medium-3"></i></a>
               <div class="heading-elements">
                 <ul class="list-inline mb-0">
                   <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
                   <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
-                  <li><a data-action="close"><i class="ft-x"></i></a></li>
                 </ul>
               </div>
             </div>
@@ -83,35 +79,34 @@
                 <table class="table table-striped">
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>IP address</th>
+                      <th>Ticket Type</th>
+                      <th>Booking</th>
+                      <th>Order</th>
+                      <th>Game Pass Issued</th>
                       <th>Created At</th>
                       <th>Status</th>
                     </tr>
                   </thead>
                   <tbody>
-                    @foreach($clients as $client)
+                    @foreach($tickets as $ticket)
                     <tr>
-                      <td>{{$client->machinename}}</td>
-                      <td>{{$client->ipaddress}}</td>
-                      <td>{{date('D jS M Y, h:i:sa', strtotime($client->created_at))}}</td>
+                      <td>{{$ticket->ticket_type->type}}</td>
+                      <td>{{$ticket->booking->reference}}</td>
+                      <td>{{$ticket->order->order_no}}</td>
                       <td>
-                        @if($client->status == 1)
+                        @if($ticket->game_pass_issued == 1)
+                        <span class="badge light badge-success"><i class="fa fa-check"></i></span>
+                        @else
+                        <span class="badge light badge-danger"><i class="fa fa-times"></i></span>
+                        @endif
+                      </td>
+                      <td>{{date('D jS M Y, h:i:sa', strtotime($ticket->created_at))}}</td>
+                      <td>
+                        @if($ticket->status == 1)
                         <span class="badge light badge-success">Active</span>
                         @else
                         <span class="badge light badge-danger">Inactive</span>
                         @endif
-                      </td>
-                      <td>
-                        <form action="{{url('/')}}/admin/client/toggle/{{$client->id}}" method="post">
-                          <div class="float-left">
-                            @if($client->status == 1)
-                            <input type="checkbox" checked="checked" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" />
-                            @else
-                            <input type="checkbox" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" />
-                            @endif
-                          </div>
-                        </form>
                       </td>
                     </tr>
                     @endforeach
@@ -120,39 +115,31 @@
               </div>
             </div>
           </div>
-          <!-- End List of clients -->
+          <!-- End List of tickets -->
         </div>
       </div>
 
       <!--Begin modals-->
 
-      <!-- Add Client Modal -->
-      <div class="modal fade text-left" id="addClient" tabindex="-1" role="dialog" aria-labelledby="myModalLabel33" aria-hidden="true">
+      <!-- Add ticket Modal -->
+      <div class="modal fade text-left" id="addTicket" tabindex="-1" role="dialog" aria-labelledby="addTicketLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header bg-success white">
-              <label class="modal-title text-text-bold-600" id="myModalLabel33">Add new Client</label>
+              <label class="modal-title text-text-bold-600" id="addTicketLabel">Add new ticket</label>
               <button type="button" class="close white" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form action="{{url('/')}}/admin/client/store" method="post">
+            <form action="{{url('/')}}/admin/ticket/store" method="post">
               @csrf
               <div class="modal-body">
-                <label>(Machine) Name: </label>
+                <label>Gamer: </label>
                 <div class="form-group">
-                  <input name="machinename" type="text" placeholder="Oculus Quest 2" class="form-control">
+                  <input name="gamer" type="text" placeholder="192.168.1.30" class="form-control">
                 </div>
 
-                <label>IP address: </label>
-                <div class="form-group">
-                  <input name="ipaddress" type="text" placeholder="192.168.1.30" class="form-control">
-                </div>
 
-                <label>Dashboard Module IP: </label>
-                <div class="form-group">
-                  <input name="dashboardmoduleip" type="text" placeholder="192.168.1.30" class="form-control">
-                </div>
               </div>
               <div class="modal-footer">
                 <input type="reset" class="btn btn-secondary btn-lg" data-dismiss="modal" value="close">
@@ -175,8 +162,4 @@
 @section('js')
 <script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/select/select2.full.min.js"></script>
 <script src="{{asset('/admin-assets/app-assets')}}/js/scripts/forms/select/form-select2.js"></script>
-<script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/toggle/bootstrap-switch.min.js"></script>
-<script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/toggle/bootstrap-checkbox.min.js"></script>
-<script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/toggle/switchery.min.js"></script>
-<script src="{{asset('/admin-assets/app-assets')}}/js/scripts/forms/switch.js"></script>
 @endsection

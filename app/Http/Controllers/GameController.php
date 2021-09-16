@@ -63,9 +63,7 @@ class GameController extends Controller
     {
         $game = $this->gameApi->store($request)->getData();
 
-        if ($game->status) {
-            return redirect()->route('admin.games');
-        } else {
+        if (!$game->status) {
             return back()->withErrors($game->data);
         }
 
@@ -158,7 +156,7 @@ class GameController extends Controller
 
     public function deletePlayerPerspective($id)
     {
-        $playerPerspective = $this->perspectiveApi->delete($id)->getData();
+        $playerPerspective = $this->perspectiveApi->toggle($id)->getData();
 
         if ($playerPerspective->status) {
             return redirect()->route('admin.games.settings');

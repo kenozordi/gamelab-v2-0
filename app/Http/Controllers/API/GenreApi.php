@@ -15,7 +15,7 @@ class GenreApi extends Controller
     public function all()
     {
         try {
-            $genre = Genre::all();
+            $genre = Genre::orderBy('created_at', 'DESC')->get();
             return ResponseFormat::returnSuccess($genre);
         } catch (Exception $e) {
             Log::error($e);
@@ -58,12 +58,13 @@ class GenreApi extends Controller
         }
     }
 
-    public function delete($id)
+    public function toggle($id)
     {
         try {
             $genre = Genre::find($id);
             if ($genre) {
-                Genre::destroy($id);
+                $genre->status = $genre->status == 1 ? 0 : 1;
+                $genre->save();
                 return ResponseFormat::returnSuccess();
             }
             return ResponseFormat::returnNotFound();

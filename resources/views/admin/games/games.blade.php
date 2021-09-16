@@ -32,8 +32,6 @@
           </button>
           <div class="dropdown-menu arrow">
             <a class="dropdown-item" href="#" data-toggle="modal" data-target="#addGame"><i class="fa fa-plus mr-1"></i> Add</a>
-            <a class="dropdown-item" href="#"><i class="fa fa-cart-plus mr-1"></i> Cart</a>
-            <a class="dropdown-item" href="#"><i class="fa fa-life-ring mr-1"></i> Support</a>
             <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="/admin/games/settings"><i class="fa fa-cog mr-1"></i> Settings</a>
           </div>

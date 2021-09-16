@@ -20,8 +20,8 @@ class BookingApi extends Controller
     public function all()
     {
         try {
-            $booking = Booking::where('status', 1)->get();
-            return ResponseFormat::returnSuccess($booking);
+            $bookings = Booking::with('game')->with('client')->orderBy('created_at', 'DESC')->get();
+            return ResponseFormat::returnSuccess($bookings);
         } catch (Exception $e) {
             Log::error($e);
             return ResponseFormat::returnFailed();
@@ -67,7 +67,7 @@ class BookingApi extends Controller
             $expires_at = date('D jS M Y, h:i:sa', strtotime($request->start_time . ' - 12 hours'));
 
             //time buffers- timing between booking sessions, to facilitate logistics and handovers of client to gamers
-            $time_buffer = 4;
+            $time_buffer = 4; //minutes
             $start_time_buffer = date('D jS M Y, h:i:sa', strtotime($start_time . ' - ' . $time_buffer . ' minutes'));
             $end_time_buffer = date('D jS M Y, h:i:sa', strtotime($end_time . ' + ' . $time_buffer . ' minutes'));
 
@@ -86,7 +86,7 @@ class BookingApi extends Controller
             }
 
             //if start_date is less than 12 hours away from current_date set expiry date to 10 minutes after current time
-            if (strtotime('now + 13 hours') >= strtotime($start_time)) {
+            if (strtotime('now + 12 hours') >= strtotime($start_time)) {
                 $expires_at = date('D jS M Y, h:i:sa', strtotime('now + 10 minutes'));
             }
 

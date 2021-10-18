@@ -97,6 +97,24 @@
 
       <!-- Recent Orders -->
       <div class="row">
+        <!-- Errors -->
+        @if ($errors->any())
+        <div class="col-12">
+          <div class="alert bg-danger alert-icon-left alert-dismissible mb-2" role="alert">
+            <span class="alert-icon"><i class="fa fa-thumbs-o-down"></i></span>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+            <ul>
+              @foreach ($errors->all() as $error)
+              <li><strong>{{ $error }}</strong></li>
+              @endforeach
+            </ul>
+          </div>
+        </div>
+        @endif
+        <!-- End Errors -->
+
         <div class="col-xl-4 col-lg-12">
           <div class="card">
             <div class="card-content">
@@ -219,7 +237,7 @@
           <div class="card">
             <div class="card-content">
               <!-- <img class="card-img-top img-fluid" src="{{asset('/images')}}/product/madden.jpg" alt="Card image cap" /> -->
-              <img class="card-img-top img-fluid" src="{{asset('storage/public')}}/games/hello.jpg" alt="Card image cap" />
+              <img class="card-img-top img-fluid" src="{{asset('storage')}}/games/{{$game->cover_image}}" alt="{{$game->title}}" />
               <div class="card-body">
                 <h4 class="card-title">{{$game->title}}</h4>
                 <p class="card-text">{{$game->description}}</p>

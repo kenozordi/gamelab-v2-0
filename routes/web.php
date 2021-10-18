@@ -100,8 +100,8 @@ Route::group(['prefix' => 'admin'], function () {
 });
 
 //admin routes
-// Route::group(['prefix' => 'admin', 'middleware' => 'auth:admin'], function () {
-Route::group(['prefix' => 'admin'], function () {
+Route::group(['prefix' => 'admin', 'middleware' => 'auth:admin'], function () {
+    // Route::group(['prefix' => 'admin'], function () {
     Route::get('/dashboard', 'AdminController@dashboard')->name('admin.dashboard');
 
     //game routes

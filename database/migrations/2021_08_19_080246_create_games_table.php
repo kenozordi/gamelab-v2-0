@@ -22,6 +22,7 @@ class CreateGamesTable extends Migration
             $table->integer('max_players')->nullable()->default(1);
             $table->integer('player_perspective_id')->nullable();
             $table->integer('rating')->nullable();
+            $table->string('cover_image')->nullable();
             $table->boolean('status')->nullable()->default(1);
             $table->timestamps();
         });

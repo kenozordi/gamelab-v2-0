@@ -49,6 +49,9 @@ class GameController extends Controller
     {
         $game = $this->gameApi->get($id)->getData();
         $game = $game->status ? $game->data : null;
+        if (!$game) {
+            return view('admin.error404');
+        }
         $gameRevenue = $this->gameApi->totalRevenue($id);
 
         $clients = $this->clientApi->all()->getData();

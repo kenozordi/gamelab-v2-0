@@ -26,7 +26,7 @@ class AdminLoginController extends Controller
         $page_description = '';
         $action = __FUNCTION__;
 
-        return view('admin.login', compact('page_title', 'page_description', 'action'));
+        return view('admin.loginForm', compact('page_title', 'page_description', 'action'));
     }
 
     public function authenticate(Request $request)

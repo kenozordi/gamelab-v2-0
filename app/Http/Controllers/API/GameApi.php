@@ -51,7 +51,7 @@ class GameApi extends Controller
                 'player_perspective_id' => ['integer', 'exists:player_perspectives,id'],
                 'rating' => ['integer', 'max:5'],
                 'status' => ['boolean'],
-                'cover_image' => ['required', 'mimes:jpeg,png,jpg', 'max:5000']
+                'cover_image' => ['mimes:jpeg,png,jpg', 'max:5000']
             ]);
 
             if ($validator->fails()) {
@@ -59,10 +59,16 @@ class GameApi extends Controller
             }
             $game = $validator->validated();
 
-            // $game = Game::create($game);
-            // $path = $request->file('cover_image')->storeAs('avatars', $game->id, 'public');
-            $path = $request->file('cover_image')->storeAs('games', 'hello.' . $request->file('cover_image')->extension(), 'public');
-            dd($path);
+            $game = Game::create($game);
+
+            //save the game's image on storage and add the link of the image to the request to be created
+            if ($request->hasFile('cover_image') && $request->file('cover_image')->isValid()) {
+                $fileName = $game->id . '.' . $request->file('cover_image')->extension();
+                $request->file('cover_image')->storeAs('games', $fileName, 'public');
+                // $game['cover_image'] = $fileName;
+                $game->cover_image = $fileName;
+                $game->save();
+            }
 
             $game = Game::where('id', $game->id)->with('genre')->with('game_mode')->with('player_perspective')->first();
             return ResponseFormat::returnSuccess($game);

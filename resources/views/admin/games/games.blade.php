@@ -3,6 +3,9 @@
 
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/forms/selects/select2.min.css">
+<link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/forms/toggle/bootstrap-switch.min.css">
+<link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/forms/toggle/switchery.min.css">
+<link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/css/plugins/forms/switch.css">
 @endsection
 
 @section('content')
@@ -28,7 +31,7 @@
       <div class="content-header-right col-md-4 col-12">
         <div class="btn-group float-md-right">
           <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="icon-settings"></i>
+            <i class="icon-wrench"></i>
           </button>
           <div class="dropdown-menu arrow">
             <a class="dropdown-item" href="#" data-toggle="modal" data-target="#addGame"><i class="fa fa-plus mr-1"></i> Add</a>
@@ -69,16 +72,15 @@
               <div class="heading-elements">
                 <ul class="list-inline mb-0">
                   <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
-                  <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                  <li><a id="reload" data-action="reload"><i class="ft-rotate-cw"></i></a></li>
                   <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
-                  <li><a data-action="close"><i class="ft-x"></i></a></li>
                 </ul>
               </div>
             </div>
             <div class="card-content collapse show">
 
               <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table dtable table-striped table-bordered">
                   <thead>
                     <tr>
                       <th>Title</th>
@@ -94,7 +96,7 @@
                   <tbody>
                     @foreach($games as $game)
                     <tr>
-                      <td>{{$game->title}}</td>
+                      <td><a href="{{url('/')}}/admin/games/{{$game->id}}">{{$game->title}}</a></td>
                       <td>{{substr($game->description, 0, 20)}} ...</td>
                       <td>{{$game->genre->name}}</td>
                       <td>{{$game->game_mode->mode}}</td>
@@ -102,11 +104,16 @@
                       <td>{{$game->player_perspective->perspective}}</td>
                       <td>{{$game->rating}}</td>
                       <td>
-                        @if($game->status == 1)
-                        <span class="badge light badge-success">Active</span>
-                        @else
-                        <span class="badge light badge-danger">Inactive</span>
-                        @endif
+                        <form action="{{url('/')}}/admin/games/toggle/{{$game->id}}" method="post">
+                          @csrf
+                          <div class="float-left">
+                            @if($game->status == 1)
+                            <input type="checkbox" checked="checked" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" data-action="reload" onchange="$(this).closest('form').submit(); $('#reload').click(); return false;" />
+                            @else
+                            <input type="checkbox" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" data-action="reload" onchange="$(this).closest('form').submit(); $('#reload').click(); return false;" />
+                            @endif
+                          </div>
+                        </form>
                       </td>
                     </tr>
                     @endforeach
@@ -131,7 +138,7 @@
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
-            <form action="{{url('/')}}/admin/games/store" method="post">
+            <form action="{{url('/')}}/admin/games/store" method="post" enctype="multipart/form-data">
               @csrf
               <div class="modal-body">
                 <label>Title: </label>
@@ -180,6 +187,14 @@
                 <div class="form-group">
                   <input name="rating" type="number" placeholder="5" class="form-control">
                 </div>
+
+                <label>Image: </label>
+                <fieldset class="form-group">
+                  <div class="custom-file">
+                    <input name="cover_image" type="file" class="custom-file-input" id="inputGroupFile01">
+                    <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                  </div>
+                </fieldset>
               </div>
               <div class="modal-footer">
                 <input type="reset" class="btn btn-secondary btn-lg" data-dismiss="modal" value="close">
@@ -246,4 +261,11 @@
 @section('js')
 <script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/select/select2.full.min.js"></script>
 <script src="{{asset('/admin-assets/app-assets')}}/js/scripts/forms/select/form-select2.js"></script>
+<script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/toggle/bootstrap-switch.min.js"></script>
+<script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/toggle/bootstrap-checkbox.min.js"></script>
+<script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/toggle/switchery.min.js"></script>
+<script src="{{asset('/admin-assets/app-assets')}}/js/scripts/forms/switch.js"></script>
+<!-- <script>
+  $('.table').DataTable();
+</script> -->
 @endsection

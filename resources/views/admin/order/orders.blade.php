@@ -27,14 +27,9 @@
       </div>
       <div class="content-header-right col-md-4 col-12">
         <div class="btn-group float-md-right">
-          <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="icon-settings"></i>
+          <button class="btn btn-success" data-toggle="modal" data-target="#addOrder">
+            <i class="ft-plus"></i> Add
           </button>
-          <div class="dropdown-menu arrow">
-            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#addOrder"><i class="fa fa-plus mr-1"></i> Add</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/admin/games/settings"><i class="fa fa-cog mr-1"></i> Settings</a>
-          </div>
         </div>
       </div>
     </div>
@@ -76,7 +71,7 @@
             <div class="card-content collapse show">
 
               <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table dtable table-striped table-bordered">
                   <thead>
                     <tr>
                       <th>Order No</th>
@@ -87,12 +82,13 @@
                       <th>Reference</th>
                       <th>Created At</th>
                       <th>Status</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     @foreach($orders as $order)
                     <tr>
-                      <td>{{$order->order_no}}</td>
+                      <td><a href="{{url('/')}}/admin/order/{{$order->id}}">{{$order->order_no}}</a></td>
                       <td>{{$order->gamer_id}}</td>
                       <td>₦{{$order->total}}</td>
                       <td>{{$order->order_date}}</td>
@@ -111,6 +107,20 @@
                         @endif
                         @if($order->status == 3)
                         <span class="badge light badge-danger">Failed</span>
+                        @endif
+                      </td>
+                      <td>
+                        @if($order->status == 1 || $order->status == 3)
+                        <form action="{{url('/')}}/admin/order/pay/{{$order->id}}" method="post">
+                          @csrf
+                          <button type="submit" class="btn btn-sm btn-success mr-1 mb-1">
+                            <i class="ft-credit-card"></i> Pay
+                          </button>
+                        </form>
+                        @else
+                        <button disabled type="button" class="btn btn-sm btn-success mr-1 mb-1">
+                          <i class="ft-credit-card"></i> Pay
+                        </button>
                         @endif
                       </td>
                     </tr>
@@ -141,12 +151,17 @@
               <div class="modal-body">
                 <label>Gamer: </label>
                 <div class="form-group">
-                  <input name="gamer" type="text" placeholder="TopGamer105" class="form-control">
+                  <select name="gamer" class="hide-search form-control" style="width: 100%">
+                    <option>None</option>
+                    @foreach($gamers as $gamer)
+                    <option value="{{$gamer->id}}">{{$gamer->username}}</option>
+                    @endforeach
+                  </select>
                 </div>
 
                 <label>Add. Info: </label>
                 <div class="form-group">
-                  <input name="additional_info" type="text" class="form-control">
+                  <input name="additional_info" type="text" class="form-control" value="No info">
                 </div>
 
                 <label>Bookings: </label>

@@ -31,13 +31,20 @@ Route::group(['prefix' => 'admin'], function () {
 // Route::group(['prefix' => 'admin', 'middleware' => 'auth:admin'], function () {
 Route::group(['prefix' => 'admin'], function () {
 
+    //gamers routes
+    Route::get('/gamer/gamers', 'GamerApi@all');
+    Route::get('/gamer/{id}', 'GamerApi@get');
+    Route::post('/gamer/store', 'GamerApi@store');
+    Route::put('/gamer/update', 'GamerApi@update');
+    Route::post('/gamer/toggle/{id}', 'GamerApi@toggle');
+
     //games routes
     Route::get('/game/games', 'GameApi@all');
     Route::get('/game/{id}', 'GameApi@get');
     Route::post('/game/store', 'GameApi@store');
-    Route::delete('/game/{id}', 'GameApi@delete');
     Route::post('/game/add-to-client', 'GameApi@addGameToClient');
-
+    Route::put('/game/update', 'GameApi@update');
+    Route::delete('/game/{id}', 'GameApi@delete');
 
     //genre routes
     Route::get('/genre/genres', 'GenreApi@all');
@@ -49,6 +56,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/client/clients', 'ClientApi@all');
     Route::get('/client/{id}', 'ClientApi@get');
     Route::post('/client/store', 'ClientApi@store');
+    Route::put('/client/update', 'ClientApi@update');
     Route::delete('/client/{id}', 'ClientApi@delete');
 
     //game mode routes
@@ -79,9 +87,11 @@ Route::group(['prefix' => 'admin'], function () {
     //ticket routes
     Route::get('/ticket/tickets', 'TicketApi@all');
     Route::get('/ticket/types', 'TicketApi@allTicketType');
+    Route::get('/ticket/byOrderNo/{orderNo}', 'TicketApi@getTicketByOrderNo');
     Route::get('/ticket/{id}', 'TicketApi@get');
-    Route::post('/ticket/store', 'TicketApi@store');
-    Route::delete('/ticket/{id}', 'TicketApi@delete');
     Route::post('/ticket/type/store', 'TicketApi@storeTicketType');
     Route::post('/ticket/type/{id}', 'TicketApi@toggleTicketType');
+    Route::post('/ticket/store', 'TicketApi@store');
+    Route::post('/ticket/history', 'TicketApi@history');
+    Route::delete('/ticket/{id}', 'TicketApi@delete');
 });

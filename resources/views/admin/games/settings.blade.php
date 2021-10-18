@@ -3,6 +3,9 @@
 
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/forms/selects/select2.min.css">
+<link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/forms/toggle/bootstrap-switch.min.css">
+<link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/forms/toggle/switchery.min.css">
+<link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/css/plugins/forms/switch.css">
 @endsection
 
 @section('content')
@@ -28,12 +31,12 @@
       <div class="content-header-right col-md-4 col-12">
         <div class="btn-group float-md-right">
           <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="icon-plus mr-1"></i>Add
+            <i class="ft-plus"></i> Add
           </button>
           <div class="dropdown-menu arrow">
-            <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#addGenre"><i class="fa fa-plus mr-1"></i> Genre</a>
-            <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#addGameMode"><i class="fa fa-cart-plus mr-1"></i> Mode</a>
-            <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#addPlayerPerspective"><i class="fa fa-life-ring mr-1"></i> Perspective</a>
+            <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#addGenre"><i class="ft-anchor mr-1"></i>Genre</a>
+            <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#addGameMode"><i class="ft-users mr-1"></i>Mode</a>
+            <a class="dropdown-item" href="javascript:void(0)" data-toggle="modal" data-target="#addPlayerPerspective"><i class="ft-camera mr-1"></i>Perspective</a>
           </div>
         </div>
       </div>
@@ -69,22 +72,20 @@
               <div class="heading-elements">
                 <ul class="list-inline mb-0">
                   <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
-                  <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                  <li><a id="refreshGenre" data-action="reload"><i class="ft-rotate-cw"></i></a></li>
                   <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
-                  <li><a data-action="close"><i class="ft-x"></i></a></li>
                 </ul>
               </div>
             </div>
             <div class="card-content collapse show">
 
               <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table table-striped table-bordered">
                   <thead>
                     <tr>
                       <th>Name</th>
                       <th>Status</th>
                       <th>Created At</th>
-                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -92,21 +93,18 @@
                     <tr>
                       <td>{{$genre->name}}</td>
                       <td>
-                        @if($genre->status == 1)
-                        <span class="badge light badge-success">Active</span>
-                        @else
-                        <span class="badge light badge-danger">Inactive</span>
-                        @endif
-                      </td>
-                      <td>{{$genre->created_at}}</td>
-                      <td>
-                        <form action="{{url('/')}}/admin/genre/delete/{{$genre->id}}" method="post">
+                        <form action="{{url('/')}}/admin/genre/toggle/{{$genre->id}}" method="post">
                           @csrf
-                          <a href="javascript:void(0)" onclick="$(this).closest('form').submit(); return false;" class="btn btn-sm btn-icon btn-danger mr-1" data-action="reload">
-                            <i class="fa fa-trash"></i>
-                          </a>
+                          <div class="float-left">
+                            @if($genre->status == 1)
+                            <input type="checkbox" checked="checked" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" onchange="$(this).closest('form').submit(); $('#refreshGenre').click(); return false;" />
+                            @else
+                            <input type="checkbox" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" onchange="$(this).closest('form').submit(); $('#refreshGenre').click(); return false;" />
+                            @endif
+                          </div>
                         </form>
                       </td>
+                      <td>{{$genre->created_at}}</td>
                     </tr>
                     @endforeach
                   </tbody>
@@ -126,22 +124,20 @@
               <div class="heading-elements">
                 <ul class="list-inline mb-0">
                   <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
-                  <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                  <li><a id="refreshMode" data-action="reload"><i class="ft-rotate-cw"></i></a></li>
                   <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
-                  <li><a data-action="close"><i class="ft-x"></i></a></li>
                 </ul>
               </div>
             </div>
             <div class="card-content collapse show">
 
               <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table table-striped table-bordered">
                   <thead>
                     <tr>
                       <th>Mode</th>
                       <th>Status</th>
                       <th>Created At</th>
-                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -149,21 +145,18 @@
                     <tr>
                       <td>{{$mode->mode}}</td>
                       <td>
-                        @if($mode->status == 1)
-                        <span class="badge light badge-success">Active</span>
-                        @else
-                        <span class="badge light badge-danger">Inactive</span>
-                        @endif
-                      </td>
-                      <td>{{$mode->created_at}}</td>
-                      <td>
-                        <form action="{{url('/')}}/admin/gameMode/delete/{{$mode->id}}" method="post">
+                        <form action="{{url('/')}}/admin/gameMode/toggle/{{$mode->id}}" method="post">
                           @csrf
-                          <a href="javascript:void(0)" onclick="$(this).closest('form').submit(); return false;" class="btn btn-sm btn-icon btn-danger mr-1" data-action="reload">
-                            <i class="fa fa-trash"></i>
-                          </a>
+                          <div class="float-left">
+                            @if($mode->status == 1)
+                            <input type="checkbox" checked="checked" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" onchange="$(this).closest('form').submit(); $('#refreshMode').click(); return false;" />
+                            @else
+                            <input type="checkbox" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" onchange="$(this).closest('form').submit(); $('#refreshMode').click(); return false;" />
+                            @endif
+                          </div>
                         </form>
                       </td>
+                      <td>{{$mode->created_at}}</td>
                     </tr>
                     @endforeach
                   </tbody>
@@ -183,22 +176,20 @@
               <div class="heading-elements">
                 <ul class="list-inline mb-0">
                   <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
-                  <li><a data-action="reload"><i class="ft-rotate-cw"></i></a></li>
+                  <li><a id="refreshPerspective" data-action="reload"><i class="ft-rotate-cw"></i></a></li>
                   <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
-                  <li><a data-action="close"><i class="ft-x"></i></a></li>
                 </ul>
               </div>
             </div>
             <div class="card-content collapse show">
 
               <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table dtable table-striped table-bordered">
                   <thead>
                     <tr>
                       <th>Perspective</th>
                       <th>Status</th>
                       <th>Created At</th>
-                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -206,21 +197,18 @@
                     <tr>
                       <td>{{$perspective->perspective}}</td>
                       <td>
-                        @if($perspective->status == 1)
-                        <span class="badge light badge-success">Active</span>
-                        @else
-                        <span class="badge light badge-danger">Inactive</span>
-                        @endif
-                      </td>
-                      <td>{{$perspective->created_at}}</td>
-                      <td>
-                        <form action="{{url('/')}}/admin/playerPerspective/delete/{{$perspective->id}}" method="post">
+                        <form action="{{url('/')}}/admin/playerPerspective/toggle/{{$perspective->id}}" method="post">
                           @csrf
-                          <a href="javascript:void(0)" onclick="$(this).closest('form').submit(); return false;" class="btn btn-sm btn-icon btn-danger mr-1" data-action="reload">
-                            <i class="fa fa-trash"></i>
-                          </a>
+                          <div class="float-left">
+                            @if($perspective->status == 1)
+                            <input type="checkbox" checked="checked" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" onchange="$(this).closest('form').submit(); $('#refreshPerspective').click(); return false;" />
+                            @else
+                            <input type="checkbox" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" onchange="$(this).closest('form').submit(); $('#refreshPerspective').click(); return false;" />
+                            @endif
+                          </div>
                         </form>
                       </td>
+                      <td>{{$perspective->created_at}}</td>
                     </tr>
                     @endforeach
                   </tbody>
@@ -376,4 +364,8 @@
 @section('js')
 <script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/select/select2.full.min.js"></script>
 <script src="{{asset('/admin-assets/app-assets')}}/js/scripts/forms/select/form-select2.js"></script>
+<script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/toggle/bootstrap-switch.min.js"></script>
+<script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/toggle/bootstrap-checkbox.min.js"></script>
+<script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/toggle/switchery.min.js"></script>
+<script src="{{asset('/admin-assets/app-assets')}}/js/scripts/forms/switch.js"></script>
 @endsection

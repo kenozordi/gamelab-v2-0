@@ -26,4 +26,24 @@ class Game extends Model
     {
         return $this->belongsTo(PlayerPerspective::class);
     }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public function game_clients()
+    {
+        return $this->hasMany(GameClient::class);
+    }
+
+    public function getCreatedAtAttribute()
+    {
+        return date('D jS M Y, h:i:sa', strtotime(str_replace('-', '/', $this->attributes['created_at'])));
+    }
+
+    public function getUpdatedAtAttribute()
+    {
+        return date('D jS M Y, h:i:sa', strtotime(str_replace('-', '/', $this->attributes['updated_at'])));
+    }
 }

@@ -18,6 +18,7 @@
     <link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/charts/morris.css">
     <link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/extensions/unslider.css">
     <link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/weather-icons/climacons.min.css">
+    <link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/tables/datatable/datatables.min.css">
     <!-- END VENDOR CSS-->
     <!-- BEGIN ROBUST CSS-->
     <link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/css/app.css">
@@ -62,6 +63,7 @@
     <script src="{{asset('/admin-assets/app-assets')}}/vendors/js/charts/chartist-plugin-tooltip.js"></script>
     <script src="{{asset('/admin-assets/app-assets')}}/vendors/js/charts/chart.min.js"></script>
     <script src="{{asset('/admin-assets/app-assets')}}/vendors/js/charts/jquery.sparkline.min.js"></script>
+    <script src="{{asset('/admin-assets/app-assets')}}/vendors/js/tables/datatable/datatables.min.js"></script>
     <script src="{{asset('/admin-assets/app-assets')}}/vendors/js/extensions/moment.min.js"></script>
     <script src="{{asset('/admin-assets/app-assets')}}/vendors/js/extensions/underscore-min.js"></script>
     <script src="{{asset('/admin-assets/app-assets')}}/vendors/js/extensions/clndr.min.js"></script>
@@ -74,6 +76,7 @@
     <!-- END ROBUST JS-->
     <!-- BEGIN PAGE LEVEL JS-->
     <script src="{{asset('/admin-assets/app-assets')}}/js/scripts/pages/dashboard-project.js"></script>
+    <script src="{{asset('/admin-assets/app-assets')}}/js/scripts/tables/datatables/datatable-basic.js"></script>
     <!-- END PAGE LEVEL JS-->
 </body>
 

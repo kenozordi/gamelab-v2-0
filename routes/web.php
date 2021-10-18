@@ -104,52 +104,73 @@ Route::group(['prefix' => 'admin'], function () {
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/dashboard', 'AdminController@dashboard')->name('admin.dashboard');
 
-    //games routes
+    //game routes
     Route::get('/games', 'GameController@games')->name('admin.games');
     Route::get('/games/create', 'GameController@create')->name('admin.games.create');
     Route::post('/games/store', 'GameController@store')->name('admin.games.store');
     Route::get('/games/settings', 'GameController@settings')->name('admin.games.settings');
-    Route::get('/games/{id}', 'GameController@get')->name('admin.games.get');
+    Route::post('/games/toggle/{id}', 'GameController@toggle')->name('admin.games.toggle');
+    Route::post('/games/update/{id}', 'GameController@update')->name('admin.games.update');
+    Route::get('/games/{id}', 'GameController@get')->name('admin.games.game');
+
+    //gamer routes
+    Route::get('/gamer', 'GamerController@gamer')->name('admin.gamer');
+    Route::get('/gamer/create', 'GamerController@create')->name('admin.gamer.create');
+    Route::post('/gamer/store', 'GamerController@store')->name('admin.gamer.store');
+    Route::get('/gamer/settings', 'GamerController@settings')->name('admin.gamer.settings');
+    Route::post('/gamer/toggle/{id}', 'GamerController@toggle')->name('admin.gamer.toggle');
+    Route::post('/gamer/update/{id}', 'GamerController@update')->name('admin.gamer.update');
+    Route::get('/gamer/{id}', 'GamerController@get')->name('admin.gamer.game');
 
     //genre routes
     Route::post('/genre/store', 'GameController@storeGenre')->name('admin.genre.store');
     Route::post('/genre/delete/{id}', 'GameController@deleteGenre')->name('admin.genre.delete');
+    Route::post('/genre/toggle/{id}', 'GameController@toggleGenre')->name('admin.genre.toggle');
 
     //gameMode routes
     Route::post('/gameMode/store', 'GameController@storeGameMode')->name('admin.gameMode.store');
     Route::post('/gameMode/delete/{id}', 'GameController@deleteGameMode')->name('admin.gameMode.delete');
+    Route::post('/gameMode/toggle/{id}', 'GameController@toggleGameMode')->name('admin.gameMode.toggle');
+
+    //gameClient routes
+    Route::post('/gameClient/store', 'GameController@addGameToClient')->name('admin.gameClient.store');
+    Route::post('/gameClient/delete/{id}', 'GameController@deleteGameClient')->name('admin.gameClient.delete');
 
     //playerPerspective routes
     Route::post('/playerPerspective/store', 'GameController@storePlayerPerspective')->name('admin.playerPerspective.store');
     Route::post('/playerPerspective/delete/{id}', 'GameController@deletePlayerPerspective')->name('admin.playerPerspective.delete');
+    Route::post('/playerPerspective/toggle/{id}', 'GameController@togglePlayerPerspective')->name('admin.playerPerspective.toggle');
 
     //client routes
     Route::get('/clients', 'ClientController@clients')->name('admin.clients');
     Route::get('/client/create', 'ClientController@create')->name('admin.client.create');
     Route::post('/client/store', 'ClientController@store')->name('admin.client.store');
-    Route::get('/client/settings', 'ClientController@settings')->name('admin.client.settings');
-    Route::get('/client/{id}', 'ClientController@get')->name('admin.client.get');
+    Route::post('/client/toggle/{id}', 'ClientController@toggle')->name('admin.client.toggle');
+    Route::post('/client/update/{id}', 'ClientController@update')->name('admin.client.update');
+    Route::get('/client/{id}', 'ClientController@get')->name('admin.client.client');
 
     //booking routes
     Route::get('/bookings', 'BookingController@bookings')->name('admin.bookings');
     Route::get('/booking/create', 'BookingController@create')->name('admin.booking.create');
     Route::post('/booking/store', 'BookingController@store')->name('admin.booking.store');
-    Route::get('/booking/settings', 'BookingController@settings')->name('admin.booking.settings');
-    Route::get('/booking/{id}', 'BookingController@get')->name('admin.booking.get');
+    Route::post('/booking/delete/{id}', 'BookingController@delete')->name('admin.booking.delete');
+    Route::get('/booking/{id}', 'BookingController@get')->name('admin.booking.booking');
 
     //order routes
     Route::get('/orders', 'OrderController@orders')->name('admin.orders');
     Route::get('/order/create', 'OrderController@create')->name('admin.order.create');
     Route::post('/order/store', 'OrderController@store')->name('admin.order.store');
-    Route::get('/order/settings', 'OrderController@settings')->name('admin.order.settings');
-    Route::get('/order/{id}', 'OrderController@get')->name('admin.order.get');
+    Route::post('/order/addGamerToOrder', 'OrderController@addGamerToOrder')->name('admin.order.addGamerToOrder');
+    Route::post('/order/pay/{order_id}', 'OrderController@pay')->name('admin.order.pay');
+    Route::get('/order/{id}', 'OrderController@get')->name('admin.order.order');
 
     //ticket routes
     Route::get('/tickets', 'TicketController@tickets')->name('admin.tickets');
     Route::get('/ticket/create', 'TicketController@create')->name('admin.ticket.create');
     Route::post('/ticket/store', 'TicketController@store')->name('admin.ticket.store');
-    Route::get('/ticket/settings', 'TicketController@settings')->name('admin.ticket.settings');
-    Route::get('/ticket/{id}', 'TicketController@get')->name('admin.ticket.get');
+    Route::post('/ticket/issueGamePass/{guid}', 'TicketController@issueGamePass')->name('admin.ticket.issueGamePass');
+    Route::post('/ticket/toggle/{id}', 'TicketController@toggle')->name('admin.ticket.toggle');
+    Route::get('/ticket/{id}', 'TicketController@get')->name('admin.ticket.ticket');
 
     Route::get('/logout', 'AdminLoginController@logout')->name('admin.logout');
 });

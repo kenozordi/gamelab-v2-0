@@ -65,4 +65,26 @@ class TicketController extends Controller
 
         return redirect()->route('admin.tickets');
     }
+
+    public function toggle($ticketId)
+    {
+        $ticket = $this->ticketApi->toggle($ticketId)->getData();
+
+        if (!$ticket->status) {
+            return back()->withErrors($ticket->data);
+        }
+
+        return redirect()->route('admin.tickets');
+    }
+
+    public function issueGamePass($ticketId)
+    {
+        $ticket = $this->ticketApi->issueGamePass($ticketId)->getData();
+
+        if (!$ticket->status) {
+            return back()->withErrors($ticket->data);
+        }
+
+        return redirect()->route('admin.tickets');
+    }
 }

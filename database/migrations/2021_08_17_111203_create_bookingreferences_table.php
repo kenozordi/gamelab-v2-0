@@ -16,16 +16,16 @@ class CreateBookingreferencesTable extends Migration
         Schema::create('bookingreferences', function (Blueprint $table) {
             $table->integer('id', true);
             $table->longText('reference');
-            $table->integer('gamer')->nullable();
+            $table->integer('gamer_id')->nullable();
             $table->boolean('status')->nullable()->default(1);
             $table->integer('duration');
-            $table->string('start_time', 256);
-            $table->string('end_time', 256);
-            $table->string('expires_at', 256);
+            $table->timestamp('start_time');
+            $table->timestamp('end_time');
+            $table->timestamp('expires_at');
             $table->integer('client_id');
             $table->integer('game_id')->nullable();
-            // $table->integer('order_id')->nullable();
             $table->string('order_no')->nullable();
+            $table->integer('amount');
             $table->timestamps();
         });
     }

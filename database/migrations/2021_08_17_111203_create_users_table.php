@@ -14,7 +14,7 @@ class CreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->string('Id', 128)->primary();
+            $table->integer('id', true);
             $table->string('email', 256)->nullable();
             $table->boolean('email_confirmed')->nullable();
             $table->string('fullname', 256);
@@ -30,8 +30,9 @@ class CreateUsersTable extends Migration
             $table->dateTime('last_login')->nullable();
             $table->boolean('isdeleted')->nullable();
             $table->integer('role')->nullable();
-            $table->integer('status')->nullable();
+            $table->integer('status')->default(1);
             $table->integer('password_reset')->nullable();
+            $table->timestamps();
         });
     }
 

@@ -11,4 +11,14 @@ class GameClient extends Model
 
     protected $table = "game_clients";
     protected $guarded = [];
+
+    public function game()
+    {
+        return $this->belongsTo(Game::class);
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
 }

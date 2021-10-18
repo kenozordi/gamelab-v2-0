@@ -27,14 +27,9 @@
       </div>
       <div class="content-header-right col-md-4 col-12">
         <div class="btn-group float-md-right">
-          <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="icon-settings"></i>
+          <button class="btn btn-success" data-toggle="modal" data-target="#addBooking">
+            <i class="ft-plus"></i> Add
           </button>
-          <div class="dropdown-menu arrow">
-            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#addBooking"><i class="fa fa-plus mr-1"></i> Add</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/admin/games/settings"><i class="fa fa-cog mr-1"></i> Settings</a>
-          </div>
         </div>
       </div>
     </div>
@@ -76,7 +71,7 @@
             <div class="card-content collapse show">
 
               <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table dtable table-striped table-bordered">
                   <thead>
                     <tr>
                       <th>Reference</th>
@@ -84,7 +79,8 @@
                       <th>Duration</th>
                       <th>Client</th>
                       <th>Game</th>
-                      <th>Order</th>
+                      <th>Amount</th>
+                      <th>Order No</th>
                       <th>Start time</th>
                       <th>End time</th>
                       <th>Expire at</th>
@@ -96,10 +92,15 @@
                     @foreach($bookings as $booking)
                     <tr>
                       <td>{{$booking->reference}}</td>
-                      <td>{{$booking->gamer}}</td>
+                      @if($booking->gamer_id != null)
+                      <td>{{$booking->gamer->username}}</td>
+                      @else
+                      <td></td>
+                      @endif
                       <td>{{$booking->duration}} mins</td>
                       <td>{{$booking->client->machinename}}</td>
                       <td>{{$booking->game->title}}</td>
+                      <td>{{$booking->amount}}</td>
                       <td>{{$booking->order_no}}</td>
                       <td>{{$booking->start_time}}</td>
                       <td>{{$booking->end_time}}</td>
@@ -140,24 +141,33 @@
               <div class="modal-body">
                 <label>Gamer: </label>
                 <div class="form-group">
-                  <input name="gamer" type="text" placeholder="192.168.1.30" class="form-control">
+                  <select name="gamer_id" class="hide-search form-control" style="width: 100%">
+                    <option value="0">None</option>
+                    @foreach($gamers as $gamer)
+                    @if($gamer->status == 1)
+                    <option value="{{$gamer->id}}">{{$gamer->username}}</option>
+                    @endif
+                    @endforeach
+                  </select>
                 </div>
 
                 <label>Duration: </label>
                 <div class="form-group">
-                  <input name="duration" type="text" placeholder="192.168.1.30" class="form-control">
+                  <input name="duration" disabled type="text" placeholder="30 mins" class="form-control">
                 </div>
 
                 <label>Start time: </label>
                 <div class="form-group">
-                  <input name="start_time" type="datetime" class="form-control">
+                  <input name="start_time" type="datetime-local" class="form-control">
                 </div>
 
                 <label>Client: </label>
                 <div class="form-group">
                   <select name="client_id" class="hide-search form-control" style="width: 100%">
                     @foreach($clients as $client)
+                    @if($client->status == 1)
                     <option value="{{$client->id}}">{{$client->machinename}}</option>
+                    @endif
                     @endforeach
                   </select>
                 </div>
@@ -166,7 +176,9 @@
                 <div class="form-group">
                   <select name="game_id" class="hide-search form-control" style="width: 100%">
                     @foreach($games as $game)
+                    @if($game->status == 1)
                     <option value="{{$game->id}}">{{$game->title}}</option>
+                    @endif
                     @endforeach
                   </select>
                 </div>
@@ -180,7 +192,7 @@
           </div>
         </div>
       </div>
-      <!-- End Add Game Modal -->
+      <!-- End Add Booking Modal -->
 
       <!--End modals-->
 

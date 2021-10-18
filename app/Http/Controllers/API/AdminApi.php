@@ -150,22 +150,5 @@ class AdminApi extends Controller
 
     public function test()
     {
-        // return ResponseFormat::returnSuccess();
-        $data = ['1,2,3', '3,4,5'];
-        $first = $data[0];
-        $second = $data[1];
-        $firstArray = explode(',', $first);
-        sort($firstArray);
-        $secondArray = explode(',', $second);
-        sort($secondArray);
-        $result = '';
-        for ($i = 0; $i < count($firstArray); $i++) {
-            for ($j = 0; $j < count($secondArray); $j++) {
-                if ($firstArray[$i] == $secondArray[$j]) {
-                    $result = $result . $firstArray[$i];
-                }
-            }
-        }
-        return ResponseFormat::returnSuccess($result);
     }
 }

@@ -3,6 +3,9 @@
 
 @section('css')
 <link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/forms/selects/select2.min.css">
+<link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/forms/toggle/bootstrap-switch.min.css">
+<link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/vendors/css/forms/toggle/switchery.min.css">
+<link rel="stylesheet" type="text/css" href="{{asset('/admin-assets/app-assets')}}/css/plugins/forms/switch.css">
 @endsection
 
 @section('content')
@@ -27,14 +30,9 @@
       </div>
       <div class="content-header-right col-md-4 col-12">
         <div class="btn-group float-md-right">
-          <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="icon-settings"></i>
+          <button class="btn btn-success" data-toggle="modal" data-target="#addTicket">
+            <i class="ft-plus"></i> Generate
           </button>
-          <div class="dropdown-menu arrow">
-            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#addTicket"><i class="fa fa-plus mr-1"></i> Add</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/admin/games/settings"><i class="fa fa-cog mr-1"></i> Settings</a>
-          </div>
         </div>
       </div>
     </div>
@@ -69,6 +67,7 @@
               <div class="heading-elements">
                 <ul class="list-inline mb-0">
                   <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+                  <li><a id="refreshTickets" data-action="reload"><i class="ft-rotate-cw"></i></a></li>
                   <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
                 </ul>
               </div>
@@ -76,7 +75,7 @@
             <div class="card-content collapse show">
 
               <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table dtable table-striped table-bordered">
                   <thead>
                     <tr>
                       <th>Ticket Type</th>
@@ -94,19 +93,29 @@
                       <td>{{$ticket->booking->reference}}</td>
                       <td>{{$ticket->order->order_no}}</td>
                       <td>
-                        @if($ticket->game_pass_issued == 1)
-                        <span class="badge light badge-success"><i class="fa fa-check"></i></span>
-                        @else
-                        <span class="badge light badge-danger"><i class="fa fa-times"></i></span>
-                        @endif
+                        <form action="{{url('/')}}/admin/ticket/issueGamePass/{{$ticket->guid}}" method="post">
+                          @csrf
+                          <div class="float-left">
+                            @if($ticket->game_pass_issued == 1)
+                            <input type="checkbox" checked="checked" class="switch" data-icon-cls="fa" data-off-icon-cls="ft-thumbs-down" data-on-icon-cls="ft-thumbs-up" id="switch1" data-group-cls="btn-group-sm" onchange="$(this).closest('form').submit(); $('#refreshTickets').click(); return false;" />
+                            @else
+                            <input type="checkbox" class="switch" data-icon-cls="fa" data-off-icon-cls="ft-thumbs-down" data-on-icon-cls="ft-thumbs-up" id="switch1" data-group-cls="btn-group-sm" onchange="$(this).closest('form').submit(); $('#refreshTickets').click(); return false;" />
+                            @endif
+                          </div>
+                        </form>
                       </td>
                       <td>{{date('D jS M Y, h:i:sa', strtotime($ticket->created_at))}}</td>
                       <td>
-                        @if($ticket->status == 1)
-                        <span class="badge light badge-success">Active</span>
-                        @else
-                        <span class="badge light badge-danger">Inactive</span>
-                        @endif
+                        <form action="{{url('/')}}/admin/ticket/toggle/{{$ticket->guid}}" method="post">
+                          @csrf
+                          <div class="float-left">
+                            @if($ticket->status == 1)
+                            <input type="checkbox" checked="checked" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" data-action="reload" onchange="$(this).closest('form').submit(); $('#reload').click(); return false;" />
+                            @else
+                            <input type="checkbox" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" data-action="reload" onchange="$(this).closest('form').submit(); $('#reload').click(); return false;" />
+                            @endif
+                          </div>
+                        </form>
                       </td>
                     </tr>
                     @endforeach
@@ -126,7 +135,7 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header bg-success white">
-              <label class="modal-title text-text-bold-600" id="addTicketLabel">Add new ticket</label>
+              <label class="modal-title text-text-bold-600" id="addTicketLabel">Generate tickets</label>
               <button type="button" class="close white" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -134,12 +143,20 @@
             <form action="{{url('/')}}/admin/ticket/store" method="post">
               @csrf
               <div class="modal-body">
-                <label>Gamer: </label>
+                <label>Order: </label>
                 <div class="form-group">
-                  <input name="gamer" type="text" placeholder="192.168.1.30" class="form-control">
+                  <select name="order_id" class="hide-search form-control" style="width: 100%">
+                    @foreach($orders as $order)
+                    @if($order->status)
+                    <option value="{{$order->id}}">{{$order->order_no}}</option>
+                    @endif
+                    @endforeach
+                  </select>
                 </div>
-
-
+                <label>Issue gamepass? </label>
+                <div class="form-group">
+                  <input checked="checked" name="game_pass_issued" type="checkbox" class="switch" id="switch9" data-icon-cls="fa" data-off-icon-cls="ft-thumbs-down" data-on-icon-cls="ft-thumbs-up" />
+                </div>
               </div>
               <div class="modal-footer">
                 <input type="reset" class="btn btn-secondary btn-lg" data-dismiss="modal" value="close">
@@ -162,4 +179,8 @@
 @section('js')
 <script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/select/select2.full.min.js"></script>
 <script src="{{asset('/admin-assets/app-assets')}}/js/scripts/forms/select/form-select2.js"></script>
+<script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/toggle/bootstrap-switch.min.js"></script>
+<script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/toggle/bootstrap-checkbox.min.js"></script>
+<script src="{{asset('/admin-assets/app-assets')}}/vendors/js/forms/toggle/switchery.min.js"></script>
+<script src="{{asset('/admin-assets/app-assets')}}/js/scripts/forms/switch.js"></script>
 @endsection

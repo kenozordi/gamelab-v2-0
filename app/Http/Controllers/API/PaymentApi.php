@@ -13,19 +13,44 @@ use Illuminate\Support\Facades\Log;
 
 class PaymentApi extends Controller
 {
-    public function verifyOrder($order_id)
+    private function verifyOrder($order_id)
     {
         $order = Order::find($order_id);
-        if ($order) {
+        if ($order && $order->status != 0) {
+            //verify order status
+            if ($order->status == 2) {
+                return ResponseFormat::returnFailed("Order has been paid for already");
+            }
+
+            //verify booking status
             $bookings = Booking::where('order_no', $order->order_no)->get();
             if (count($bookings) > 0) {
+                $totalAmount = 0;
                 foreach ($bookings as $booking) {
-                    if ($booking->status == 0) return ResponseFormat::returnFailed(null, 'Booking ' . $booking->id . ' does not exist');
-                    if (strtotime($booking->expires_at) <= strtotime('now')) return ResponseFormat::returnFailed(null, 'Booking ' . $booking->id . ' has expired');
+                    if ($booking->status == 0) return ResponseFormat::returnFailed('Booking ' . $booking->id . ' does not exist');
+                    if (strtotime($booking->expires_at) <= strtotime('now')) return ResponseFormat::returnFailed('Booking ' . $booking->id . ' has expired');
+
+                    //verify if gaming pricing has been set
                     $gameClient = GameClient::where('game_id', $booking->game_id)
                         ->where('client_id', $booking->client_id)
                         ->first();
-                    if (!$gameClient) return ResponseFormat::returnFailed(null, 'Invalid game or client selected for booking ' . $booking->id);
+                    if (!$gameClient) return ResponseFormat::returnFailed('Invalid game or client selected for booking ' . $booking->id);
+
+                    //verify if booking has been paid for
+                    if ($booking->order_no) {
+                        $order = Order::where('order_no', $booking->order_no)->first();
+                        if ($order && $order->status == 2) {
+                            return ResponseFormat::returnFailed('Booking ' . $booking->id . ' has been paid for already');
+                        }
+                    }
+
+                    $totalAmount += $booking->amount;
+                }
+
+                // verify amount of bookings agains order
+                if ($order->total != $totalAmount) {
+                    $order->total = $totalAmount;
+                    $order->save();
                 }
             }
             return ResponseFormat::returnSuccess($order);
@@ -36,27 +61,21 @@ class PaymentApi extends Controller
     public function pay($order_id)
     {
         try {
-            $order = Order::find($order_id);
-            if ($order) {
-                if ($order->status == 2) {
-                    return ResponseFormat::returnFailed(null, "Order has been paid for already");
-                }
-                if ($order->status == 1) {
-                    //pay through payment gateway here
+            $apiResponse = $this->verifyOrder($order_id);
+            $result = $this->verifyOrder($order_id)->getData();
 
-                    $order->status = 2;
-                    $order->order_date = date('D jS M Y, h:i:sa');
-                    $order->save();
-
-                    //create ticket here
-
-                    return ResponseFormat::returnSuccess($order); //return ticket instead, do not return order here
-                }
+            if ($result->status) {
+                $order = Order::find($order_id);
+                $order->status = 2;
+                $order->order_date = date('Y-m-d H:i:s');
+                $order->save();
+                $order = $order->refresh();
+                return ResponseFormat::returnSuccess($order);
             }
-            return ResponseFormat::returnFailed(null, "Order does not exist");
+            return $apiResponse;
         } catch (Exception $e) {
             Log::info($e->getMessage());
-            return ResponseFormat::returnFailed();
+            return ResponseFormat::returnFailed($e->getMessage());
         }
     }
 }

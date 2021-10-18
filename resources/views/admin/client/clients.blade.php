@@ -30,14 +30,9 @@
       </div>
       <div class="content-header-right col-md-4 col-12">
         <div class="btn-group float-md-right">
-          <button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="icon-settings"></i>
+          <button class="btn btn-success" data-toggle="modal" data-target="#addClient">
+            <i class="icon-plus"></i> Add
           </button>
-          <div class="dropdown-menu arrow">
-            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#addClient"><i class="fa fa-plus mr-1"></i> Add</a>
-            <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="/admin/games/settings"><i class="fa fa-cog mr-1"></i> Settings</a>
-          </div>
         </div>
       </div>
     </div>
@@ -72,15 +67,15 @@
               <div class="heading-elements">
                 <ul class="list-inline mb-0">
                   <li><a data-action="collapse"><i class="ft-minus"></i></a></li>
+                  <li><a id="reload" data-action="reload"><i class="ft-rotate-cw"></i></a></li>
                   <li><a data-action="expand"><i class="ft-maximize"></i></a></li>
-                  <li><a data-action="close"><i class="ft-x"></i></a></li>
                 </ul>
               </div>
             </div>
             <div class="card-content collapse show">
 
               <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table dtable table-striped table-bordered">
                   <thead>
                     <tr>
                       <th>Name</th>
@@ -92,23 +87,17 @@
                   <tbody>
                     @foreach($clients as $client)
                     <tr>
-                      <td>{{$client->machinename}}</td>
+                      <td><a href="{{url('/')}}/admin/client/{{$client->id}}">{{$client->machinename}}</a></td>
                       <td>{{$client->ipaddress}}</td>
                       <td>{{date('D jS M Y, h:i:sa', strtotime($client->created_at))}}</td>
                       <td>
-                        @if($client->status == 1)
-                        <span class="badge light badge-success">Active</span>
-                        @else
-                        <span class="badge light badge-danger">Inactive</span>
-                        @endif
-                      </td>
-                      <td>
                         <form action="{{url('/')}}/admin/client/toggle/{{$client->id}}" method="post">
+                          @csrf
                           <div class="float-left">
                             @if($client->status == 1)
-                            <input type="checkbox" checked="checked" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" />
+                            <input type="checkbox" checked="checked" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" data-action="reload" onchange="$(this).closest('form').submit(); $('#reload').click(); return false;" />
                             @else
-                            <input type="checkbox" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" />
+                            <input type="checkbox" class="switch" data-on-label="Active" data-off-label="Inactive" id="switch1" data-group-cls="btn-group-sm" data-action="reload" onchange="$(this).closest('form').submit(); $('#reload').click(); return false;" />
                             @endif
                           </div>
                         </form>

@@ -5,17 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\API\BookingApi;
 use App\Http\Controllers\API\ClientApi;
 use App\Http\Controllers\API\GameApi;
+use App\Http\Controllers\API\GamerApi;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
-    protected $bookingApi, $gameApi, $clientApi;
+    protected $bookingApi, $gameApi, $clientApi, $gamerApi;
 
-    public function __construct(BookingApi $bookingApi, GameApi $gameApi, ClientApi $clientApi)
+    public function __construct(BookingApi $bookingApi, GameApi $gameApi, ClientApi $clientApi, GamerApi $gamerApi)
     {
         $this->bookingApi = $bookingApi;
         $this->gameApi = $gameApi;
         $this->clientApi = $clientApi;
+        $this->gamerApi = $gamerApi;
     }
 
     public function bookings()
@@ -29,10 +31,13 @@ class BookingController extends Controller
         $clients = $this->clientApi->all()->getData();
         $clients = $clients->status ? $clients->data : null;
 
+        $gamers = $this->gamerApi->all()->getData();
+        $gamers = $gamers->status ? $gamers->data : null;
+
         $page_title = 'Bookings';
         $page_description = 'booking on gamelab';
 
-        return view('admin.booking.bookings', compact('page_title', 'page_description', 'bookings', 'games', 'clients'));
+        return view('admin.booking.bookings', compact('page_title', 'page_description', 'bookings', 'games', 'clients', 'gamers'));
     }
 
     public function get($id)
@@ -60,6 +65,17 @@ class BookingController extends Controller
             return back()->withErrors($bookings->data);
         }
 
-        return redirect()->route('admin.bookings');
+        return back();
+    }
+
+    public function delete($id)
+    {
+        $booking = $this->bookingApi->delete($id)->getData();
+
+        if (!$booking->status) {
+            return back()->withErrors($booking->data);
+        }
+
+        return back();
     }
 }

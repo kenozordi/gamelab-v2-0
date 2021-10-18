@@ -18,8 +18,8 @@ class CreateOrdersTable extends Migration
             $table->string('order_no', 45);
             $table->integer('gamer_id')->nullable();
             $table->decimal('total', 13);
-            $table->text('order_date')->nullable();
-            $table->integer('status')->nullable()->default(0);
+            $table->timestamp('order_date')->nullable();
+            $table->integer('status')->nullable()->default(1);
             $table->text('additional_info')->nullable();
             $table->string('system_ref', 145)->nullable();
             $table->timestamps();

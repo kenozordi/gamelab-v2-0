@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Order;
 use App\Models\TicketType;
+use App\Services\HistoryService;
 use Illuminate\Support\Facades\Validator;
 
 class TicketApi extends Controller
@@ -41,12 +42,45 @@ class TicketApi extends Controller
         return ResponseFormat::returnNotFound();
     }
 
+    public function history(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "start_date"    => "date|date_format:Y-m-d|before_or_equal:today",
+            "end_date"      => "date|date_format:Y-m-d|before_or_equal:today",
+            "status"        => "string",
+            "amount"        => "numeric"
+        ]);
+
+        if ($validator->fails()) {
+            return ResponseFormat::returnFailed($validator->errors());
+        }
+
+        $historyData = HistoryService::fetchHistory(new Ticket(), $request->all(), $request->page);
+
+        return ResponseFormat::returnSuccess($historyData);
+    }
+
+    public function getTicketByOrderNo($orderNo)
+    {
+        try {
+            $tickets = Ticket::where('order_no', $orderNo)->with('booking')->orderBy('created_at', 'DESC')->get();
+            if ($tickets) {
+                return ResponseFormat::returnSuccess($tickets);
+            }
+        } catch (Exception $e) {
+            Log::error($e);
+            return ResponseFormat::returnFailed();
+        }
+        return ResponseFormat::returnNotFound();
+    }
+
     public function store(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
                 'order_id' => ['required', 'integer', 'exists:orders,id'],
-                'game_pass_issued' => ['boolean'],
+                'tickettype_id' => ['integer', 'exists:tickettypes,id'],
+                'game_pass_issued' => ['in:on,off,true,false,1,0'],
             ]);
 
             if ($validator->fails()) {
@@ -60,37 +94,72 @@ class TicketApi extends Controller
             // verify if order has been paid for
             if ($order->status == 2) {
                 $bookings = Booking::where('order_no', $order->order_no)->get();
-                foreach ($bookings as $booking) {
-                    $ticket_exists = Ticket::where('booking_id', $booking->id)->get();
-                    if (count($ticket_exists) > 0) {
-                        // foreach ($ticket_exists as $oldTicket) {
-                        //     $oldTicket->status = 0;
-                        //     $oldTicket->save();
-                        // }
-                        Ticket::where('booking_id', $booking->id)->update(['status' => 0]);
+                if ($bookings) {
+                    foreach ($bookings as $booking) {
+
+                        //deactivate previously generated tickets for the booking
+                        $ticket_exists = Ticket::where('booking_id', $booking->id)->get();
+                        if (count($ticket_exists) > 0) {
+                            Ticket::where('booking_id', $booking->id)->update(['status' => 0]);
+                        }
+
+                        $ticket['guid'] = Str::uuid();
+                        $ticket['tickettype_id'] = isset($ticket['tickettype_id']) ? isset($ticket['tickettype_id']) : 1;
+                        $ticket['booking_id'] = $booking->id;
+                        $ticket['client_id'] = $booking->client_id;
+                        $game_pass_issued = isset($ticket['game_pass_issued']) ? isset($ticket['game_pass_issued']) : 0;
+
+                        if ($game_pass_issued) {
+                            switch ($game_pass_issued) {
+                                case 'on':
+                                case 'true':
+                                case '1':
+                                case 1:
+                                    $ticket['game_pass_issued'] = 1;
+                                    break;
+
+                                default:
+                                    $ticket['game_pass_issued'] = 0;
+                                    break;
+                            }
+                        }
+
+                        Ticket::create($ticket);
+                        $tickets[] = $ticket;
                     }
-                    $ticket['guid'] = Str::uuid();
-                    $ticket['tickettype_id'] = 1;
-                    $ticket['booking_id'] = $booking->id;
-                    $ticket['client_id'] = $booking->client_id;
-                    Ticket::create($ticket);
-                    $tickets[] = $ticket;
+                    return ResponseFormat::returnSuccess($tickets);
                 }
+                return ResponseFormat::returnFailed("No booking exist for order " . $order->order_no);
             }
-            return ResponseFormat::returnSuccess($tickets);
+            return ResponseFormat::returnFailed("Order hasn't been paid for");
         } catch (Exception $e) {
             Log::error($e);
-            return ResponseFormat::returnFailed();
+            return ResponseFormat::returnFailed($e->getMessage());
         }
     }
 
     public function toggle($id)
     {
         try {
-            $ticket = Ticket::find($id);
+            $ticket = Ticket::where('guid', $id)->first();
             if ($ticket) {
-                $ticket->status = $ticket->status == 1 ? 0 : 1;
-                $ticket->save();
+                $status = $ticket->status == 1 ? 0 : 1;
+                Ticket::where('guid', $ticket->guid)->update(['status' => $status]);
+                return ResponseFormat::returnSuccess();
+            }
+            return ResponseFormat::returnNotFound();
+        } catch (Exception $e) {
+            return ResponseFormat::returnFailed();
+        }
+    }
+
+    public function issueGamePass($id)
+    {
+        try {
+            $ticket = Ticket::where('guid', $id)->first();
+            if ($ticket) {
+                $game_pass_issued = $ticket->game_pass_issued == 1 ? 0 : 1;
+                Ticket::where('guid', $ticket->guid)->update(['game_pass_issued' => $game_pass_issued]);
                 return ResponseFormat::returnSuccess();
             }
             return ResponseFormat::returnNotFound();

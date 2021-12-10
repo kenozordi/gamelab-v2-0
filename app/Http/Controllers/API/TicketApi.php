@@ -9,10 +9,12 @@ use Illuminate\Support\Str;
 use App\Services\ResponseFormat;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Mail\TicketGenerated;
 use App\Models\Booking;
 use App\Models\Order;
 use App\Models\TicketType;
 use App\Services\HistoryService;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class TicketApi extends Controller
@@ -91,10 +93,18 @@ class TicketApi extends Controller
             $tickets = [];
 
             $order = Order::find($ticket['order_id']);
+
             // verify if order has been paid for
             if ($order->status == 2) {
                 $bookings = Booking::where('order_no', $order->order_no)->get();
                 if ($bookings) {
+
+                    //validate gamer's email address
+                    if (!isset($order->gamer->email)) {
+                        return ResponseFormat::returnFailed("Gamer's email address missing, cannot send tickets");
+                    }
+
+                    //generate tickets for each booking in the order
                     foreach ($bookings as $booking) {
 
                         //deactivate previously generated tickets for the booking
@@ -124,9 +134,12 @@ class TicketApi extends Controller
                             }
                         }
 
-                        Ticket::create($ticket);
-                        $tickets[] = $ticket;
+                        $savedTicket = Ticket::create($ticket);
+                        $tickets[] = $savedTicket;
+                        // Mail::to($order->gamer->email)
+                        //     ->send(new TicketGenerated($savedTicket));
                     }
+                    $this->sendTickets($tickets, $order->gamer->email);
                     return ResponseFormat::returnSuccess($tickets);
                 }
                 return ResponseFormat::returnFailed("No booking exist for order " . $order->order_no);
@@ -211,6 +224,41 @@ class TicketApi extends Controller
             return ResponseFormat::returnNotFound();
         } catch (Exception $e) {
             return ResponseFormat::returnFailed();
+        }
+    }
+
+    public function sendOneTicket($id)
+    {
+        try {
+            $ticket = Ticket::where('guid', $id)->first();
+            if ($ticket) {
+                $gamer = $ticket->order->gamer;
+                if ($gamer) {
+                    $result = $this->sendTickets(array($ticket), $gamer->email);
+                    if ($result) {
+                        return ResponseFormat::returnSuccess();
+                    }
+                    return ResponseFormat::returnFailed("Failed to send ticket");
+                }
+                return ResponseFormat::returnFailed("Gamer's email address missing, cannot send ticket");
+            }
+            return ResponseFormat::returnNotFound();
+        } catch (Exception $e) {
+            return ResponseFormat::returnFailed();
+        }
+    }
+
+    private function sendTickets($tickets, $email)
+    {
+        try {
+            foreach ($tickets as $ticket) {
+                Mail::to($email)
+                    ->send(new TicketGenerated($ticket));
+            }
+            return true;
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return false;
         }
     }
 }

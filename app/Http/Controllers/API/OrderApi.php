@@ -146,7 +146,7 @@ class OrderApi extends Controller
                 Order::create($order);
             } else {
                 $order->total = $total_amount;
-                $order->save();
+                $order->update(["total" => $total_amount]);
             }
 
             return ResponseFormat::returnSuccess();

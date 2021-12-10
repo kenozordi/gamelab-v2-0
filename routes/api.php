@@ -31,6 +31,9 @@ Route::group(['prefix' => 'admin'], function () {
 // Route::group(['prefix' => 'admin', 'middleware' => 'auth:admin'], function () {
 Route::group(['prefix' => 'admin'], function () {
 
+    //email routes
+    Route::post('/email/send', 'EmailApi@send');
+
     //gamers routes
     Route::get('/gamer/gamers', 'GamerApi@all');
     Route::get('/gamer/{id}', 'GamerApi@get');
@@ -90,6 +93,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/ticket/byOrderNo/{orderNo}', 'TicketApi@getTicketByOrderNo');
     Route::get('/ticket/{id}', 'TicketApi@get');
     Route::post('/ticket/type/store', 'TicketApi@storeTicketType');
+    Route::post('/ticket/send/{id}', 'TicketApi@sendOneTicket');
     Route::post('/ticket/type/{id}', 'TicketApi@toggleTicketType');
     Route::post('/ticket/store', 'TicketApi@store');
     Route::post('/ticket/history', 'TicketApi@history');

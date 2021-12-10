@@ -84,6 +84,11 @@ Route::get('/ui-tab', 'MediquadminController@ui_tab');
 Route::get('/ui-typography', 'MediquadminController@ui_typography');
 Route::get('/widget-basic', 'MediquadminController@widget_basic');
 
+//utility/test routes
+Route::get('/mailable', function () {
+    $ticket = App\Models\Ticket::where('guid', '27103e7f-be1c-4693-9d68-f3df4b0c387f')->first();
+    return new App\Mail\TicketGenerated($ticket);
+});
 
 //public routes
 Route::get('/', function () {

@@ -91,7 +91,7 @@
                     <tr>
                       <td>{{$ticket->ticket_type->type}}</td>
                       <td>{{$ticket->booking->reference}}</td>
-                      <td>{{$ticket->order->order_no}}</td>
+                      <td><a href="{{url('/')}}/admin/order/{{$ticket->order->id}}">{{$ticket->order->order_no}}</a></td>
                       <td>
                         <form action="{{url('/')}}/admin/ticket/issueGamePass/{{$ticket->guid}}" method="post">
                           @csrf
